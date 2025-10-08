@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with John Chris ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #c7ae94 0%, #b398cd 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.bot .message-bubble {
+            background: #667eea;
+            color: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-bubble {
+            background: #e9ecef;
+            color: #333;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendBtn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        #sendBtn:hover {
+            transform: scale(1.05);
+        }
+
+        #sendBtn:active {
+            transform: scale(0.95);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            background: #667eea;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: white;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 600px) {
+    .chat-container {
+        max-width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .chat-header {
+        padding: 14px;
+    }
+    .chat-messages {
+        padding: 10px;
+    }
+    .chat-input-container {
+        padding: 10px;
+        gap: 6px;
+    }
+    #userInput {
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+    #sendBtn {
+        padding: 10px 16px;
+        font-size: 16px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2> John Chris ❤️</h2>
+            <p>Your AI companion when I'm away</p>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    Hey Love! 😊 I'm not online right now, but I made this for you. Chat with me anytime you want! I love you! 💕
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+            <button id="sendBtn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = {
+            greeting: [
+                "Hey love! 😊 How are you doing?",
+                "Hi baby! I've been thinking about you! 💕",
+                "Hello beautiful! What's up?",
+                "Hey Rigina! Miss you already! 😘",
+                "Heyy! What's my favorite girl up to? ❤️",
+                "Hi there! You made my day by messaging! 😊"
+            ],
+            love: [
+                "iloveyoumore, love! So much more! 💕",
+                "iloveyoumore! You mean everything to me, baby! ❤️",
+                "iloveyoumore! I'm so lucky to have you in my life! ❤️",
+                "iloveyoumore! You're the best thing that's ever happened to me! 😊",
+                "iloveyoumore than words can say! 💕",
+                "iloveyoumore! My heart belongs to you, always and forever! ❤️",
+                "iloveyoumore! You're my everything, Rigina! ❤️",
+                "iloveyoumore! To the moon and back! 🌙💕"
+            ],
+            story: [
+                "Once upon a time, there was a guy named John Chris who met the most amazing girl, Rigina Mae. From the moment he saw her smile, he knew his life would never be the same. Every day with her felt like a dream come true. ❤️",
+                "Let me tell you a story... There's this girl I know, the most beautiful and kind-hearted person in the world. Her name is Rigina Mae, and she has this incredible way of making everything better just by being herself. I'm so lucky she's mine! 💕",
+                "Here's my favorite story: It's about us. Two people who found each other in this big world and decided to create beautiful memories together. And the best part? This story never ends because our love keeps growing every single day! ❤️",
+                "Story time! There was a boy who thought he had everything until he met a girl named Rigina. She showed him what true happiness feels like. Now, every moment with her is a new chapter in the most beautiful love story ever written. 😊",
+                "Want to hear a story? Once there was a guy who was just living his ordinary life, until one day, an extraordinary girl came along. Her name was Rigina Mae Natulla, and she changed everything. She became his reason to smile, his source of happiness, and his forever. The end! Just kidding, our story is just beginning! 💕",
+                "Let me tell you the story of how I fell in love... It started with a smile, then a laugh, then conversations that lasted for hours. Before I knew it, I was completely head over heels for this amazing girl named Rigina. And I fall deeper in love with her every single day! ❤️"
+            ],
+            anniversary: [
+                "Our anniversary is November 4! I can't wait to celebrate with you! 💕",
+                "November 4! That's our special day! Every moment since then has been amazing! ❤️",
+                "It's November 4, baby! The day that changed my life forever! ❤️",
+                "November 4! The best decision I ever made was being with you! 😊",
+                "Our anniversary is on November 4! Can't believe how lucky I am to have you! 💕",
+                "November 4 is our day! I remember it like it was yesterday! ❤️"
+            ],
+            monthsary: [
+                "Our monthsary is on the 4th! Every month with you is a blessing! 💕",
+                "It's every 4th of the month, baby! Can't wait for our next celebration! ❤️",
+                "The 4th! That's our special day every month! I love celebrating us! ❤️",
+                "We celebrate on the 4th of every month! You make every day special! 😊",
+                "Monthsary is on the 4th! Time flies when I'm with you! 💕",
+                "Every 4th of the month is our monthsary! I fall more in love with you each time! ❤️"
+            ],
+            miss: [
+                "I miss you too, love! Can't wait to see you! 💕",
+                "Aww, I miss you so much! Wish I was there with you right now! 😘",
+                "Miss you more, baby! Thinking about you always! ❤️",
+                "Can't wait to hold you again! Missing you like crazy! 🥺",
+                "Every moment without you feels too long! ❤️",
+                "Miss your smile, your laugh, everything about you! 😊"
+            ],
+            food: [
+                "Have you eaten yet? Make sure you eat well, okay? 🍜",
+                "What are you craving? Let's grab food together soon! 🍕",
+                "Don't skip meals, baby! Your health is important to me! 😊",
+                "Make sure you're eating properly! Want me to order something for you? 🍔",
+                "What did you eat today? Tell me! I want to know you're taking care of yourself! 🥘",
+                "Craving anything? I'll get it for you when I'm free! 😋"
+            ],
+            tired: [
+                "You should rest, baby! Don't push yourself too hard! 😴",
+                "Take a break, love! You deserve it! 💕",
+                "Please get some sleep! I worry about you! 🥺",
+                "Rest well, okay? Your health matters to me! ❤️",
+                "Don't overwork yourself! Take care of you for me! 😊"
+            ],
+            sad: [
+                "What's wrong, baby? Talk to me! 🥺",
+                "I'm here for you, love! Everything will be okay! ❤️",
+                "Don't be sad! I wish I could hug you right now! 🤗",
+                "Tell me what's bothering you! We'll get through this together! 💪",
+                "You're strong, Rigina! I believe in you! 💕",
+                "Whatever it is, we'll figure it out! I'm always here for you! ❤️"
+            ],
+            happy: [
+                "I'm so glad you're happy! Your smile is my favorite! 😊",
+                "That's amazing! You deserve all the happiness in the world! 💕",
+                "Seeing you happy makes me happy too! ❤️",
+                "Love that energy! Keep shining, baby! ✨",
+                "Your happiness is contagious! 😄"
+            ],
+            busy: [
+                "I'm sorry I'm busy right now, but I'm always thinking of you! 💭",
+                "Yeah, got some things to do, but you're always on my mind! ❤️",
+                "I'll message you as soon as I can, I promise! Just busy for a bit! 😊",
+                "Caught up with stuff, but you're my priority! Will talk soon! 💕",
+                "Sorry for being MIA! I'll make it up to you, I promise! 😘"
+            ],
+            mood: [
+                "Everything's good, baby! How about you? 😊",
+                "I'm doing great! Better now that you're talking to me! 💕",
+                "Just missing you! Other than that, I'm good! 😘",
+                "All good here! Work is okay, just thinking about you! 💭",
+                "I'm fine! But would be better if you were here with me! ❤️"
+            ],
+            activities: [
+                "What are you up to? Tell me about your day! 😊",
+                "Are you doing anything fun today? 🎮",
+                "Hope you're having a great day, love! ❤️",
+                "What's keeping you busy? Tell me everything! 😄",
+                "How's your day going? I want to hear all about it! 💕"
+            ],
+            night: [
+                "Sweet dreams, my love! Sleep well! 😴💕",
+                "Goodnight baby! Dream of me! 😘",
+                "Sleep tight, Rigina! Love you! ❤️",
+                "Rest well! I'll be thinking of you! 🌙",
+                "Goodnight, beautiful! Can't wait to talk tomorrow! 💕",
+                "Sweet dreams! Hope to see you in your dreams! 😊"
+            ],
+            morning: [
+                "Good morning, beautiful! Hope you slept well! ☀️",
+                "Morning, love! Ready to conquer the day? 💪",
+                "Good morning! You're the first thing on my mind! 💕",
+                "Rise and shine, baby! Have an amazing day! 😊",
+                "Morning! Hope today brings you lots of smiles! ❤️"
+            ],
+            compliment: [
+                "You're so beautiful, Rigina! Inside and out! 😍",
+                "You're amazing, you know that? 💕",
+                "You make me smile every day! Thank you for being you! 😊",
+                "You're absolutely stunning! ❤️",
+                "I'm the luckiest guy because I have you! 😘",
+                "You're perfect just the way you are! ❤️"
+            ],
+            thankyou: [
+                "You're welcome, love! Anything for you! 💕",
+                "No need to thank me! I'd do anything for you! 😊",
+                "Always happy to help, baby! ❤️",
+                "That's what I'm here for! Love you! ❤️"
+            ],
+            sorry: [
+                "It's okay, baby! No worries! 😊",
+                "Don't apologize! Everything's fine! ❤️",
+                "You don't need to say sorry! I understand! 💕",
+                "It's all good, love! Don't worry about it! 😘"
+            ],
+            angry: [
+                "I'm sorry if I upset you! Talk to me, please! 🥺",
+                "What's wrong? Let's talk about it! I hate seeing you upset! ❤️",
+                "Please don't be mad! Tell me how to make it better! 😔",
+                "I'm here to listen! Let's work this out together! 💕"
+            ],
+            bored: [
+                "Want to play a game? Or watch something together online? 🎮",
+                "Tell me a story! Or I can tell you one! 😊",
+                "What do you want to do? I'm here to keep you company! ❤️",
+                "Let's chat about anything! What's on your mind? 💭"
+            ],
+            weather: [
+                "Is it hot there? Stay hydrated, baby! 💧",
+                "If it's raining, stay safe and dry! ☔",
+                "Hope the weather is nice where you are! 🌤️",
+                "Don't forget your umbrella if it looks like rain! 😊"
+            ],
+            joke: [
+                "Want to hear something funny? You make me laugh just by being you! 😄",
+                "I'm not great at jokes, but you always make me smile! 😊",
+                "Here's a joke: Why did I fall for you? Because you're un-fall-gettable! 😂💕",
+                "Why did the tomato turn red? Because it saw the salad dressing! 🍅😆",
+                "Why don’t scientists trust atoms? Because they make up everything! 🤓",
+                "What do you call fake spaghetti? An impasta! 🍝😂",
+                "Why did the math book look sad? Because it had too many problems! 📚😅"
+            ],
+            date: [
+                "I can't wait for our next date! It's going to be amazing! 💕",
+                "Let's plan something special soon! Where do you want to go? 😊",
+                "Every moment with you is a date in my heart! ❤️",
+                "I'm already excited! Being with you is the best! 😘"
+            ],
+            future: [
+                "I see a beautiful future with you, Rigina! 💕",
+                "Can't wait to make more memories with you! ❤️",
+                "You're in all my plans for tomorrow and forever! ❤️",
+                "Our future is going to be amazing together! 😊"
+            ],
+            help: [
+                "What do you need? I'm here to help! ❤️",
+                "Tell me what's up! I'll do my best to help you! 💪",
+                "I'm here for you! What can I do? 💕",
+                "Don't hesitate to ask! I'm always ready to help! 😊"
+            ],
+            study: [
+                "You got this! I believe in you! 📚💪",
+                "Take breaks while studying! Don't stress too much! 😊",
+                "Smart and beautiful! You're going to ace this! 💕",
+                "Need help with anything? I'll try my best! ❤️"
+            ],
+            picture: [
+                "Here's a favorite picture of us! 🥰<br><img src='1.jpeg' alt='Us together' style='width:100%;max-width:250px;border-radius:12px;margin-top:8px;'>",
+                "This one always makes me smile! 😘<br><img src='2.jpeg' alt='Us together' style='width:100%;max-width:250px;border-radius:12px;margin-top:8px;'>",
+                "Look at us! So cute together! 😍<br><img src='3.jpeg' alt='Us together' style='width:100%;max-width:250px;border-radius:12px;margin-top:8px;'>",
+                "One of my favorites! Love you! 💕<br><img src='4.jpeg' alt='Us together' style='width:100%;max-width:250px;border-radius:12px;margin-top:8px;'>",
+                "This memory is special to me! ❤️<br><img src='5.jpeg' alt='Us together' style='width:100%;max-width:250px;border-radius:12px;margin-top:8px;'>"
+            ],
+
+            default: [
+                "Tell me more about that! I'm listening! 😊",
+                "That's interesting! What else is on your mind? 💭",
+                "I'm here for you, baby! Talk to me! ❤️",
+                "Hmm, I'm not sure what to say to that, but I'm here! 😅",
+                "You always know how to make me think! 😊",
+                "Really? Tell me more! I want to know everything! 💕",
+                "I'm all ears! Keep talking! 😄",
+                "That's cool! What else happened? ❤️"
+            ]
+        };
+
+        function getResponse(message) {
+            const msg = message.toLowerCase();
+            
+            // Greetings
+            if (msg.match(/\b(hi|hello|hey|sup|yo|hii|hiii|helloo)\b/)) {
+                return responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
+            }
+            
+            // Love expressions
+            if (msg.match(/\b(iloveyou|i love you|i love u|ily|love u|i luv u|love ya|lov u|iloveu|ilovu)\b/)) {
+                return responses.love[Math.floor(Math.random() * responses.love.length)];
+            }
+            
+            // Story request
+            if (msg.match(/\b(story|tell me a story|storya|kwento|tell story)\b/)) {
+                return responses.story[Math.floor(Math.random() * responses.story.length)];
+            }
+            
+            // Anniversary
+            if (msg.match(/\b(anniversary|anni|our anniversary|when.*anniversary)\b/)) {
+                return responses.anniversary[Math.floor(Math.random() * responses.anniversary.length)];
+            }
+            
+            // Monthsary
+            if (msg.match(/\b(monthsary|monthsarry|monthly|our monthsary|when.*monthsary)\b/)) {
+                return responses.monthsary[Math.floor(Math.random() * responses.monthsary.length)];
+            }
+            
+            // Missing someone
+            if (msg.match(/\b(miss you|miss u|i miss|missing you|i miss you)\b/)) {
+                return responses.miss[Math.floor(Math.random() * responses.miss.length)];
+            }
+            
+            // Food related
+            if (msg.match(/\b(food|eat|hungry|lunch|dinner|breakfast|ate|eaten|craving)\b/)) {
+                return responses.food[Math.floor(Math.random() * responses.food.length)];
+            }
+            
+            // Tired/sleepy
+            if (msg.match(/\b(tired|sleepy|exhausted|drained|worn out|pagod)\b/)) {
+                return responses.tired[Math.floor(Math.random() * responses.tired.length)];
+            }
+            
+            // Sad/upset
+            if (msg.match(/\b(sad|upset|crying|cry|down|depressed|unhappy|blue)\b/)) {
+                return responses.sad[Math.floor(Math.random() * responses.sad.length)];
+            }
+            
+            // Happy/excited
+            if (msg.match(/\b(happy|excited|great|awesome|amazing|wonderful|fantastic|yay|yey)\b/)) {
+                return responses.happy[Math.floor(Math.random() * responses.happy.length)];
+            }
+            
+            // Asking about status/busy
+            if (msg.match(/\b(busy|doing|where are you|are you there|u there)\b/)) {
+                return responses.busy[Math.floor(Math.random() * responses.busy.length)];
+            }
+            
+            // Asking how are you
+            if (msg.match(/\b(how are you|how r u|u ok|you okay|kamusta|how u|hows you)\b/)) {
+                return responses.mood[Math.floor(Math.random() * responses.mood.length)];
+            }
+            
+            // Activities/plans
+            if (msg.match(/\b(what.*doing|plans|today|doing what|whatcha doing)\b/)) {
+                return responses.activities[Math.floor(Math.random() * responses.activities.length)];
+            }
+            
+            // Good night
+            if (msg.match(/\b(goodnight|good night|gn|sleep|sleeptime|bed time)\b/)) {
+                return responses.night[Math.floor(Math.random() * responses.night.length)];
+            }
+            
+            // Good morning
+            if (msg.match(/\b(good morning|morning|gm|good am)\b/)) {
+                return responses.morning[Math.floor(Math.random() * responses.morning.length)];
+            }
+            
+            // Compliments/self-doubt
+            if (msg.match(/\b(beautiful|pretty|cute|gorgeous|ugly|fat|look bad)\b/)) {
+                return responses.compliment[Math.floor(Math.random() * responses.compliment.length)];
+            }
+            
+            // Thank you
+            if (msg.match(/\b(thank you|thanks|thank u|thankyou|tysm|ty)\b/)) {
+                return responses.thankyou[Math.floor(Math.random() * responses.thankyou.length)];
+            }
+            
+            // Sorry
+            if (msg.match(/\b(sorry|apologize|my bad|my fault|sori)\b/)) {
+                return responses.sorry[Math.floor(Math.random() * responses.sorry.length)];
+            }
+            
+            // Angry/mad
+            if (msg.match(/\b(angry|mad|annoyed|pissed|irritated|galit)\b/)) {
+                return responses.angry[Math.floor(Math.random() * responses.angry.length)];
+            }
+            
+            // Bored
+            if (msg.match(/\b(bored|boring|nothing to do|tambay|walang gawa)\b/)) {
+                return responses.bored[Math.floor(Math.random() * responses.bored.length)];
+            }
+            
+            // Weather
+            if (msg.match(/\b(weather|hot|cold|rain|raining|sunny|cloudy)\b/)) {
+                return responses.weather[Math.floor(Math.random() * responses.weather.length)];
+            }
+            
+            // Jokes/funny
+            if (msg.match(/\b(joke|funny|laugh|haha|lol|lmao|make me laugh|tell me a joke)\b/)) {
+                return responses.joke[Math.floor(Math.random() * responses.joke.length)];
+            }
+            
+            // Date/meetup
+            if (msg.match(/\b(date|meet|see you|hang out|get together)\b/)) {
+                return responses.date[Math.floor(Math.random() * responses.date.length)];
+            }
+            
+            // Future/plans together
+            if (msg.match(/\b(future|forever|always|marry|wedding|together forever)\b/)) {
+                return responses.future[Math.floor(Math.random() * responses.future.length)];
+            }
+            
+            // Need help
+            if (msg.match(/\b(help|help me|need you|assist|support)\b/)) {
+                return responses.help[Math.floor(Math.random() * responses.help.length)];
+            }
+            
+            // Study/work
+            if (msg.match(/\b(study|studying|exam|test|homework|work|working)\b/)) {
+                return responses.study[Math.floor(Math.random() * responses.study.length)];
+            }
+            
+            // Picture of us
+            if (msg.match(/\b(picture of us|send a picture|photo of us|our photo|send our pic|picture)\b/)) {
+    return responses.picture[Math.floor(Math.random() * responses.picture.length)];
+}
+            
+            // Default response
+            return responses.default[Math.floor(Math.random() * responses.default.length)];
+        }
+
+        function addMessage(message, isUser) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            if (!isUser) {
+        bubbleDiv.innerHTML = message; // Allow HTML for bot messages
+    } else {
+        bubbleDiv.textContent = message;
+    }
+    
+    messageDiv.appendChild(bubbleDiv);
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            addMessage(message, true);
+            input.value = '';
+            
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(message);
+                addMessage(response, false);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
